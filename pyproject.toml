@@ -5,7 +5,7 @@ description = "Easily configure Python loggers."
 authors = ["Dan Kelleher <kelleherjdan@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/djkelleher/ready-logger"
+repository = "https://github.com/danklabs-dev/ready-logger"
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
