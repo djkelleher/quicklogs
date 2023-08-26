@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from uuid import uuid4
 
 import pytest
-from ready_logger import get_logger
+from ezloggers import get_logger
 
 
 @pytest.mark.parametrize("use_env_vars", [False, True])

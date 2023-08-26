@@ -1,18 +1,18 @@
 [tool.poetry]
-name = "ready-logger"
+name = "ezloggers"
 version = "1.0.0"
 description = "Easily configure Python loggers."
 authors = ["Dan Kelleher <kelleherjdan@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/danklabs-dev/ready-logger"
+repository = "https://github.com/danklabs-dev/ezloggers"
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: System :: Logging"
+    "Topic :: System :: Logging",
 ]
 keywords = ["logs", "logger", "loggers", "logging"]
 

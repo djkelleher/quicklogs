@@ -1,13 +1,11 @@
 ## Easily configure Python loggers
 
 ### Install
-`pip install ready_logger`
-
-
+`pip install ezloggers`
 ### Usage
 There is one function: `get_logger`
 ```py
-from ready_logger import get_logger
+from ezloggers import get_logger
 ```
 
 #### Signature
@@ -22,8 +20,8 @@ def get_logger(
 ) -> Logger:
     """Create a new logger or return an existing logger with the given name.
 
-    All arguments besides for `name` can be set via environment variables in the form `{LOGGER NAME}_{VARIABLE NAME}` or `READY_LOGGER_{VARIABLE NAME}`.
-    Variables including logger name will be chosen before `READY_LOGGER_` variables. Variables can be uppercase or lowercase.
+    All arguments besides for `name` can be set via environment variables in the form `{LOGGER NAME}_{VARIABLE NAME}` or `EZLOGGERS_{VARIABLE NAME}`.
+    Variables including logger name will be chosen before `EZLOGGERS_` variables. Variables can be uppercase or lowercase.
 
     Args:
         name (Optional[str], optional): Name for the logger. Defaults to None.
