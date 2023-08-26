@@ -13,6 +13,7 @@ def any_case_env_var(var: str, default: Optional[str] = None) -> Union[str, None
 def get_logger(
     name: Optional[str] = None,
     level: Optional[Union[str, int]] = None,
+    stdout: Optional[bool] = None,
     show_file_path: Optional[bool] = None,
     file_dir: Optional[Union[str, Path]] = None,
     max_bytes: Optional[int] = 20_000_000,
@@ -26,6 +27,7 @@ def get_logger(
     Args:
         name (Optional[str], optional): Name for the logger. Defaults to None.
         level (Optional[Union[str, int]], optional): Logging level -- CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10.
+        stdout (Optional[bool], optional): Whether to write to stdout.
         show_file_path (Optional[bool], optional): Show absolute file path in log string prefix rather than just filename. Defaults to True if level is DEBUG, else False.
         file_dir (Optional[Union[str, Path]], optional): Directory where log files should be written.
         max_bytes (int): Max number of bytes to store in one log file.
@@ -40,6 +42,16 @@ def get_logger(
         # return the already configured logger.
         return logger
 
+    if stdout is None:
+        if name:
+            stdout = any_case_env_var(f"{name}_STDOUT")
+        stdout = stdout or any_case_env_var("EZLOGGERS_STDOUT")
+
+    if file_dir is None:
+        if name:
+            file_dir = any_case_env_var(f"{name}_FILE_DIR")
+        file_dir = file_dir or any_case_env_var("EZLOGGERS_FILE_DIR")
+
     if level is None:
         if name:
             level = any_case_env_var(f"{name}_LOG_LEVEL")
@@ -49,11 +61,6 @@ def get_logger(
         if name:
             show_file_path = any_case_env_var(f"{name}_SHOW_FILE_PATH")
         show_file_path = show_file_path or any_case_env_var("EZLOGGERS_SHOW_FILE_PATH")
-
-    if file_dir is None:
-        if name:
-            file_dir = any_case_env_var(f"{name}_FILE_DIR")
-        file_dir = file_dir or any_case_env_var("EZLOGGERS_FILE_DIR")
 
     if max_bytes is None:
         if name:
@@ -80,9 +87,10 @@ def get_logger(
     formatter = logging.Formatter(
         f"[%(asctime)s][%(levelname)s]{name_fmt}[%({file_name_fmt})s:%(lineno)d] %(message)s"
     )
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if stdout:
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
     if file_dir:
         file = Path(file_dir) / f"{name or f'python_{os.getpid()}'}.log"
