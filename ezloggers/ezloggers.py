@@ -7,7 +7,14 @@ from typing import Optional, Union
 
 
 def any_case_env_var(var: str, default: Optional[str] = None) -> Union[str, None]:
-    return os.getenv(var) or os.getenv(var.lower()) or os.getenv(var.upper()) or default
+    value = os.getenv(var) or os.getenv(var.lower()) or os.getenv(var.upper())
+    if value is None:
+        return default
+    if (vl := value.lower()) == "true":
+        return True
+    if vl == "false":
+        return False
+    return value
 
 
 def get_logger(
