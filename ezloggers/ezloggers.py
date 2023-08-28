@@ -33,12 +33,12 @@ def get_logger(
 
     Args:
         name (Optional[str], optional): Name for the logger. Defaults to None.
-        level (Optional[Union[str, int]], optional): Logging level -- CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10.
-        stdout (Optional[bool], optional): Whether to write to stdout.
+        level (Optional[Union[str, int]], optional): Logging level -- CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10. Defaults to None.
+        stdout (Optional[bool], optional): Whether to write to stdout. Defaults to None.
         show_file_path (Optional[bool], optional): Show absolute file path in log string prefix rather than just filename. Defaults to True if level is DEBUG, else False.
-        file_dir (Optional[Union[str, Path]], optional): Directory where log files should be written.
-        max_bytes (int): Max number of bytes to store in one log file.
-        backup_count (int): Number of log rotations to keep.
+        file_dir (Optional[Union[str, Path]], optional): Directory where log files should be written. Defaults to None.
+        max_bytes (int): Max number of bytes to store in one log file. Defaults to 20MB.
+        backup_count (int): Number of log rotations to keep. Defaults to 2.
 
     Returns:
         Logger: The configured logger.
