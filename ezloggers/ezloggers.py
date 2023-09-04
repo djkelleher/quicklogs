@@ -3,7 +3,7 @@ import os
 from logging import Logger
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 
 
 def any_case_env_var(var: str, default: Optional[str] = None) -> Union[str, None]:
@@ -21,8 +21,8 @@ def get_logger(
     name: Optional[str] = None,
     level: Optional[Union[str, int]] = None,
     stdout: Optional[bool] = None,
-    show_file_path: Optional[bool] = None,
     file_dir: Optional[Union[str, Path]] = None,
+    show_source: Optional[Literal["pathname", "filename"]] = None,
     max_bytes: Optional[int] = 20_000_000,
     backup_count: Optional[int] = 2,
 ) -> Logger:
@@ -35,8 +35,8 @@ def get_logger(
         name (Optional[str], optional): Name for the logger. Defaults to None.
         level (Optional[Union[str, int]], optional): Logging level -- CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10. Defaults to None.
         stdout (Optional[bool], optional): Whether to write to stdout. Defaults to None.
-        show_file_path (Optional[bool], optional): Show absolute file path in log string prefix rather than just filename. Defaults to True if level is DEBUG, else False.
         file_dir (Optional[Union[str, Path]], optional): Directory where log files should be written. Defaults to None.
+        show_source (Optional[bool], optional): `pathname`: Show absolute file path in log string prefix. `filename`: Show file name in log string prefix. Defaults to None.
         max_bytes (int): Max number of bytes to store in one log file. Defaults to 20MB.
         backup_count (int): Number of log rotations to keep. Defaults to 2.
 
@@ -69,10 +69,10 @@ def get_logger(
             level = any_case_env_var(f"{name}_LOG_LEVEL")
         level = level or any_case_env_var("EZLOGGERS_LOG_LEVEL", logging.INFO)
 
-    if show_file_path is None:
+    if show_source is None:
         if name:
-            show_file_path = any_case_env_var(f"{name}_SHOW_FILE_PATH")
-        show_file_path = show_file_path or any_case_env_var("EZLOGGERS_SHOW_FILE_PATH")
+            show_source = any_case_env_var(f"{name}_SHOW_SOURCE")
+        show_source = show_source or any_case_env_var("EZLOGGERS_SHOW_SOURCE")
 
     if max_bytes is None:
         if name:
@@ -94,11 +94,13 @@ def get_logger(
     )
 
     # set formatting and handling.
-    file_name_fmt = "pathname" if show_file_path else "filename"
-    name_fmt = "[%(name)s]" if name else ""
-    formatter = logging.Formatter(
-        f"[%(asctime)s][%(levelname)s]{name_fmt}[%({file_name_fmt})s:%(lineno)d] %(message)s"
-    )
+    log_format = "[%(asctime)s][%(levelname)s]"
+    if name:
+        log_format += "[%(name)s]"
+    if show_source:
+        log_format += f"[%({show_source})s:%(lineno)d]"
+    log_format += " %(message)s"
+    formatter = logging.Formatter(log_format)
     if stdout:
         handler = logging.StreamHandler()
         handler.setFormatter(formatter)
