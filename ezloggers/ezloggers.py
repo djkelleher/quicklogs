@@ -60,9 +60,7 @@ def get_logger(
         file_dir = file_dir or any_case_env_var("EZLOGGERS_FILE_DIR")
 
     if stdout is None and file_dir is None:
-        logger.warning(
-            "No setting for `stdout` or `file_dir` was provided. Nothing will be logged."
-        )
+        stdout = True
 
     if level is None:
         if name:
