@@ -1,4 +1,4 @@
-## Easily configure Python loggers
+Easily create and configure Python loggers from single function call, optionally using environment variable instead of function arguments.
 
 ### Install
 `pip install quicklogs`
