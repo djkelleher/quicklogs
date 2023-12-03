@@ -4,41 +4,33 @@ from tempfile import TemporaryDirectory
 from uuid import uuid4
 
 import pytest
-from ezloggers import get_logger
+
+from quicklogs import get_logger
 
 
 @pytest.mark.parametrize("use_env_vars", [False, True])
 def test_logger(use_env_vars):
     file_dir = Path(TemporaryDirectory().name)
     level = "DEBUG"
-    show_file_path = True
     backup_count = 2
     max_bytes = 1000
 
+    name = f"test_logger_{uuid4()}"
     if use_env_vars:
-        name = f"test_logger_{uuid4()}"
         for var, value in (
             (f"{name}_LOG_LEVEL", level),
-            (f"{name}_SHOW_FILE_PATH", str(show_file_path)),
+            (f"{name}_SHOW_SOURCE", "pathname"),
             (f"{name}_FILE_DIR", str(file_dir)),
             (f"{name}_MAX_BYTES", str(max_bytes)),
             (f"{name}_BACKUP_COUNT", str(backup_count)),
         ):
             os.environ[var] = value
-        logger = get_logger(
-            name=name,
-            level=None,
-            show_file_path=None,
-            file_dir=None,
-            max_bytes=None,
-            backup_count=None,
-        )
+        logger = get_logger(name=name)
     else:
-        name = f"test_logger_{uuid4()}"
         logger = get_logger(
             name=name,
             level=level,
-            show_file_path=show_file_path,
+            show_source="pathname",
             file_dir=file_dir,
             max_bytes=max_bytes,
             backup_count=backup_count,
