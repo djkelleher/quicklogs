@@ -1,10 +1,10 @@
 ## Easily configure Python loggers
 
 ### Install
-`pip install ezloggers`
+`pip install quicklogs`
 ### Usage
 There is one function: `get_logger`
 ```py
-from ezloggers import get_logger
+from quicklogs import get_logger
 ```
-See [arguments and docs](./ezloggers/ezloggers.py#20)
+See [arguments and docs](./quicklogs/quicklogs.py#20)

@@ -28,8 +28,8 @@ def get_logger(
 ) -> Logger:
     """Create a new logger or return an existing logger with the given name.
 
-    All arguments besides for `name` can be set via environment variables in the form `{LOGGER NAME}_{VARIABLE NAME}` or `EZLOGGERS_{VARIABLE NAME}`.
-    Variables including logger name will be chosen before `EZLOGGERS_` variables. Variables can be uppercase or lowercase.
+    All arguments besides for `name` can be set via environment variables in the form `{LOGGER NAME}_{VARIABLE NAME}` or `QUICKLOGS_{VARIABLE NAME}`.
+    Variables including logger name will be chosen before `QUICKLOGS_` variables. Variables can be uppercase or lowercase.
 
     Args:
         name (Optional[str], optional): Name for the logger. Defaults to None.
@@ -52,12 +52,12 @@ def get_logger(
     if stdout is None:
         if name:
             stdout = any_case_env_var(f"{name}_STDOUT")
-        stdout = stdout or any_case_env_var("EZLOGGERS_STDOUT")
+        stdout = stdout or any_case_env_var("QUICKLOGS_STDOUT")
 
     if file_dir is None:
         if name:
             file_dir = any_case_env_var(f"{name}_FILE_DIR")
-        file_dir = file_dir or any_case_env_var("EZLOGGERS_FILE_DIR")
+        file_dir = file_dir or any_case_env_var("QUICKLOGS_FILE_DIR")
 
     if stdout is None and file_dir is None:
         stdout = True
@@ -65,24 +65,24 @@ def get_logger(
     if level is None:
         if name:
             level = any_case_env_var(f"{name}_LOG_LEVEL")
-        level = level or any_case_env_var("EZLOGGERS_LOG_LEVEL", logging.INFO)
+        level = level or any_case_env_var("QUICKLOGS_LOG_LEVEL", logging.INFO)
 
     if show_source is None:
         if name:
             show_source = any_case_env_var(f"{name}_SHOW_SOURCE")
-        show_source = show_source or any_case_env_var("EZLOGGERS_SHOW_SOURCE")
+        show_source = show_source or any_case_env_var("QUICKLOGS_SHOW_SOURCE")
 
     if max_bytes is None:
         if name:
             max_bytes = any_case_env_var(f"{name}_MAX_BYTES")
-        max_bytes = max_bytes or any_case_env_var("EZLOGGERS_MAX_BYTES")
+        max_bytes = max_bytes or any_case_env_var("QUICKLOGS_MAX_BYTES")
     if max_bytes:
         max_bytes = int(max_bytes)
 
     if backup_count is None:
         if name:
             backup_count = any_case_env_var(f"{name}_BACKUP_COUNT")
-        backup_count = backup_count or any_case_env_var("EZLOGGERS_BACKUP_COUNT")
+        backup_count = backup_count or any_case_env_var("QUICKLOGS_BACKUP_COUNT")
     if backup_count:
         backup_count = int(backup_count)
 
