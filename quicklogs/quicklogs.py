@@ -20,7 +20,7 @@ def any_case_env_var(var: str, default: Optional[str] = None) -> Union[str, None
 def get_logger(
     name: Optional[str] = None,
     level: Optional[Union[str, int]] = None,
-    stdout: Optional[bool] = None,
+    stdout: bool = True,
     file_dir: Optional[Union[str, Path]] = None,
     show_source: Optional[Literal["pathname", "filename"]] = None,
     max_bytes: Optional[int] = 20_000_000,
@@ -34,7 +34,7 @@ def get_logger(
     Args:
         name (Optional[str], optional): Name for the logger. Defaults to None.
         level (Optional[Union[str, int]], optional): Logging level -- CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10. Defaults to None.
-        stdout (Optional[bool], optional): Whether to write to stdout. Defaults to None.
+        stdout (bool): Whether to write to stdout. Defaults to True.
         file_dir (Optional[Union[str, Path]], optional): Directory where log files should be written. Defaults to None.
         show_source (Optional[bool], optional): `pathname`: Show absolute file path in log string prefix. `filename`: Show file name in log string prefix. Defaults to None.
         max_bytes (int): Max number of bytes to store in one log file. Defaults to 20MB.
@@ -49,7 +49,7 @@ def get_logger(
         # return the already configured logger.
         return logger
 
-    if stdout is None:
+    if not stdout:
         if name:
             stdout = any_case_env_var(f"{name}_STDOUT")
         stdout = stdout or any_case_env_var("QUICKLOGS_STDOUT")
@@ -58,9 +58,6 @@ def get_logger(
         if name:
             file_dir = any_case_env_var(f"{name}_FILE_DIR")
         file_dir = file_dir or any_case_env_var("QUICKLOGS_FILE_DIR")
-
-    if stdout is None and file_dir is None:
-        stdout = True
 
     if level is None:
         if name:
