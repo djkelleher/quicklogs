@@ -20,11 +20,11 @@ def any_case_env_var(var: str, default: Optional[str] = None) -> Union[str, None
 def get_logger(
     name: Optional[str] = None,
     level: Optional[Union[str, int]] = None,
-    stdout: bool = True,
+    terminal: bool = True,
     file_dir: Optional[Union[str, Path]] = None,
     show_source: Optional[Literal["pathname", "filename"]] = None,
-    max_bytes: Optional[int] = 20_000_000,
-    backup_count: Optional[int] = 2,
+    file_max_bytes: Optional[int] = 20_000_000,
+    max_rotations: Optional[int] = 2,
 ) -> Logger:
     """Create a new logger or return an existing logger with the given name.
 
@@ -34,11 +34,11 @@ def get_logger(
     Args:
         name (Optional[str], optional): Name for the logger. Defaults to None.
         level (Optional[Union[str, int]], optional): Logging level -- CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10. Defaults to None.
-        stdout (bool): Whether to write to stdout. Defaults to True.
+        terminal (bool): Whether to write logs to terminal. Defaults to True.
         file_dir (Optional[Union[str, Path]], optional): Directory where log files should be written. Defaults to None.
         show_source (Optional[bool], optional): `pathname`: Show absolute file path in log string prefix. `filename`: Show file name in log string prefix. Defaults to None.
-        max_bytes (int): Max number of bytes to store in one log file. Defaults to 20MB.
-        backup_count (int): Number of log rotations to keep. Defaults to 2.
+        file_max_bytes (int): Max number of bytes to store in one log file. Defaults to 20MB.
+        max_rotations (int): Number of log rotations to keep. Defaults to 2.
 
     Returns:
         Logger: The configured logger.
@@ -49,10 +49,10 @@ def get_logger(
         # return the already configured logger.
         return logger
 
-    if not stdout:
+    if not terminal:
         if name:
-            stdout = any_case_env_var(f"{name}_STDOUT")
-        stdout = stdout or any_case_env_var("QUICKLOGS_STDOUT")
+            terminal = any_case_env_var(f"{name}_TERMINAL")
+        terminal = terminal or any_case_env_var("QUICKLOGS_TERMINAL")
 
     if file_dir is None:
         if name:
@@ -69,19 +69,19 @@ def get_logger(
             show_source = any_case_env_var(f"{name}_SHOW_SOURCE")
         show_source = show_source or any_case_env_var("QUICKLOGS_SHOW_SOURCE")
 
-    if max_bytes is None:
+    if file_max_bytes is None:
         if name:
-            max_bytes = any_case_env_var(f"{name}_MAX_BYTES")
-        max_bytes = max_bytes or any_case_env_var("QUICKLOGS_MAX_BYTES")
-    if max_bytes:
-        max_bytes = int(max_bytes)
+            file_max_bytes = any_case_env_var(f"{name}_FILE_MAX_BYTES")
+        file_max_bytes = file_max_bytes or any_case_env_var("QUICKLOGS_FILE_MAX_BYTES")
+    if file_max_bytes:
+        file_max_bytes = int(file_max_bytes)
 
-    if backup_count is None:
+    if max_rotations is None:
         if name:
-            backup_count = any_case_env_var(f"{name}_BACKUP_COUNT")
-        backup_count = backup_count or any_case_env_var("QUICKLOGS_BACKUP_COUNT")
-    if backup_count:
-        backup_count = int(backup_count)
+            max_rotations = any_case_env_var(f"{name}_MAX_ROTATIONS")
+        max_rotations = max_rotations or any_case_env_var("QUICKLOGS_MAX_ROTATIONS")
+    if max_rotations:
+        max_rotations = int(max_rotations)
 
     # set log level.
     logger.setLevel(
@@ -96,7 +96,7 @@ def get_logger(
         log_format += f"[%({show_source})s:%(lineno)d]"
     log_format += " %(message)s"
     formatter = logging.Formatter(log_format)
-    if stdout:
+    if terminal:
         handler = logging.StreamHandler()
         handler.setFormatter(formatter)
         logger.addHandler(handler)
@@ -107,7 +107,7 @@ def get_logger(
         file.parent.mkdir(exist_ok=True, parents=True)
         # add file handler.
         handler = RotatingFileHandler(
-            file, maxBytes=max_bytes, backupCount=backup_count
+            file, maxBytes=file_max_bytes, backupCount=max_rotations
         )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
