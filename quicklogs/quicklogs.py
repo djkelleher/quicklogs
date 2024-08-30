@@ -20,7 +20,7 @@ def any_case_env_var(var: str, default: Optional[str] = None) -> Union[str, None
 def get_logger(
     name: Optional[str] = None,
     level: Optional[Union[str, int]] = None,
-    terminal: bool = True,
+    no_terminal: Optional[bool] = None,
     file_dir: Optional[Union[str, Path]] = None,
     show_source: Optional[Literal["pathname", "filename"]] = None,
     file_max_bytes: Optional[int] = 20_000_000,
@@ -34,7 +34,7 @@ def get_logger(
     Args:
         name (Optional[str], optional): Name for the logger. Defaults to None.
         level (Optional[Union[str, int]], optional): Logging level -- CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10. Defaults to None.
-        terminal (bool): Whether to write logs to terminal. Defaults to True.
+        no_terminal (bool): If True, don't write logs to terminal. Defaults to False.
         file_dir (Optional[Union[str, Path]], optional): Directory where log files should be written. Defaults to None.
         show_source (Optional[bool], optional): `pathname`: Show absolute file path in log string prefix. `filename`: Show file name in log string prefix. Defaults to None.
         file_max_bytes (int): Max number of bytes to store in one log file. Defaults to 20MB.
@@ -49,10 +49,10 @@ def get_logger(
         # return the already configured logger.
         return logger
 
-    if not terminal:
+    if no_terminal is None:
         if name:
-            terminal = any_case_env_var(f"{name}_TERMINAL")
-        terminal = terminal or any_case_env_var("QUICKLOGS_TERMINAL")
+            no_terminal = any_case_env_var(f"{name}_NO_TERMINAL")
+        no_terminal = no_terminal or any_case_env_var("QUICKLOGS_NO_TERMINAL")
 
     if file_dir is None:
         if name:
@@ -96,7 +96,7 @@ def get_logger(
         log_format += f"[%({show_source})s:%(lineno)d]"
     log_format += " %(message)s"
     formatter = logging.Formatter(log_format)
-    if terminal:
+    if not no_terminal:
         handler = logging.StreamHandler()
         handler.setFormatter(formatter)
         logger.addHandler(handler)
